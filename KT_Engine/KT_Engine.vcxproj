@@ -117,6 +117,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,6 +129,8 @@
     <ClInclude Include="AngleInterval.h" />
     <ClInclude Include="CompileTime_Factory.h" />
     <ClInclude Include="CreateStrategy.h" />
+    <ClInclude Include="Dispacher.h" />
+    <ClInclude Include="DispatcherFill.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="PrimaryType_Category.h" />

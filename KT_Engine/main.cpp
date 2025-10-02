@@ -1,15 +1,10 @@
 
 #include <iostream>
-#include <random>
-#include "VectorND.h"
-#include "Matrix.h"
-#include "Vec3.h"
-#include "Random.h"
 #include <thread>
 #include "Angle.h"
 #include "AngleInterval.h"
-#include "CreateStrategy.h"
-#include "RunTime_Factory.h"
+#include "Dispacher.h"
+
 template<typename type>
 static constexpr type data = 1000000;
 
@@ -20,6 +15,7 @@ class Base
 {
 public:
 	Base() : m_data(std::make_unique<int>(30)){}
+	Base(int t): m_data(std::make_unique<int>(t)){}
 	Base(const Base& other) : m_data(std::make_unique<int>(*other.m_data)){}
 	virtual ~Base() = default;
 	virtual void test()
@@ -48,11 +44,64 @@ private:
 	int m_t;
 };
 
+struct Derived2 : public Base
+{
+	Derived2() :m_t(0)
+	{
+
+	}
+	Derived2(int t) : m_t(t)
+	{
+		m_data = std::make_unique<int>(t);
+	}
+	void test() override
+	{
+		std::cout << *m_data;
+	}
+private:
+	int m_t;
+};
+
+void toto(Base& lhs, Base& rhs,int)
+{
+	std::cout << "base";
+}
+void toto(Derived2& lhs, Derived1& rhs, int t)
+{
+	std::cout << " Derived 1 et Devived 2" << t;
+}
+
+void toto(Derived1& lhs, Derived1& rhs, int t)
+{
+	std::cout << " Derived 1 et Devived 1" << t;
+}
+
+void toto(Derived2& lhs, Derived2& rhs, int t)
+{
+	std::cout << " Derived 2 et Devived 2" << t;
+}
+
+void info(Base& data)
+{
+	std::cout << typeid(data).name();
+}
+
+
+void totoLambda(Base& test, Base& test2,int)
+{
+	std::cout << " GOAL" << std::endl;
+}
+
+
 int main()
 {
+	Derived1 d;
+	info(d);
 	auto angle = Degree<float>(100,  SignedInterval<float>{});
 	angle.AsDegrees();
 	angle.SetInterval(UnsignedInterval<float>());
+
+
 
 	/*Derived1 t(12);
 	Derived1 t2(t);
