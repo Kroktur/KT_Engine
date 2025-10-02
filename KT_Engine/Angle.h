@@ -257,7 +257,6 @@ public:
 	StaticAngle(const StaticAngle& other);
 	StaticAngle(StaticAngle&& other) noexcept;
 	type AsRadians();
-
 	type AsRadians() const;
 	type AsDegrees();
 	type AsDegrees() const;

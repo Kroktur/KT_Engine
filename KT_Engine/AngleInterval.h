@@ -76,6 +76,7 @@ type AngleInterval<type>::GetMax() const
 template <typename type> requires is_floating_type_v<type>
 type AngleInterval<type>::Normalize(const type& radiant) const
 {
+
 	type range = m_max - m_min;
 	type value = radiant - m_min;
 
