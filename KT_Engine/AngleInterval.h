@@ -8,7 +8,7 @@ class AngleInterval
 {
 public:
 	AngleInterval(const type& min, const type& max);
-
+	AngleInterval();
 	AngleInterval(const AngleInterval& other);
 
 	AngleInterval(AngleInterval&& other) noexcept;
@@ -16,6 +16,7 @@ public:
 	type GetMin() const;
 
 	type GetMax() const;
+
 
 	type Normalize(const type& radiant) const;
 
@@ -39,6 +40,11 @@ AngleInterval<type>::AngleInterval(const type& min, const type& max): m_min(min)
 {
 	if (m_min >= m_max)
 		throw std::out_of_range("max must be higher than min");
+}
+
+template <typename type> requires is_floating_type_v<type>
+AngleInterval<type>::AngleInterval() : m_min(type{}),m_max(type{})
+{
 }
 
 template <typename type> requires is_floating_type_v<type>
@@ -101,27 +107,17 @@ AngleInterval<type>& AngleInterval<type>::operator=(AngleInterval&& other) noexc
 template <typename type> requires is_floating_type_v<type>
 bool AngleInterval<type>::operator==(const AngleInterval& other) const
 {
-	if constexpr (is_floating_type_v<type>)
-	{
-		type Epsilon = static_cast<type>(Math::EPSILON_FLOAT);
-
-		return Math::IsSameValue(m_min, other.m_min, Epsilon) && Math::IsSameValue(m_max, other.m_max, Epsilon);
-	}
-	else
-		return Math::IsSameValue(m_min, other.m_min) && Math::IsSameValue(m_max, other.m_max);
+	
+		return Math::IsSameValue(m_min, other.m_min, Math::EPSILON_V<type>) && Math::IsSameValue(m_max, other.m_max, Math::EPSILON_V<type>);
+	
 }
 
 template <typename type> requires is_floating_type_v<type>
 bool AngleInterval<type>::operator!=(const AngleInterval& other) const
 {
-	if constexpr (is_floating_type_v<type>)
-	{
-		type Epsilon = static_cast<type>(Math::EPSILON_FLOAT);
 
-		return !Math::IsSameValue(m_min, other.m_min, Epsilon) || !Math::IsSameValue(m_max, other.m_max, Epsilon);
-	}
-	else
-		return !Math::IsSameValue(m_min, other.m_min) || !Math::IsSameValue(m_max, other.m_max);
+		return !Math::IsSameValue(m_min, other.m_min, Math::EPSILON_V<type>) || !Math::IsSameValue(m_max, other.m_max, Math::EPSILON_V<type>);
+	
 }
 
 template <typename type> requires is_floating_type_v<type>

@@ -4,76 +4,48 @@ template<typename type> requires is_floating_type_v<type>
 class Angle;
 
 template<typename type> requires is_floating_type_v<type>
-Angle< type> Degree(const type& degree, AngleInterval<type>* interval);
+Angle< type> Degree(const type& degree, const AngleInterval<type>& interval);
 
 template<typename type> requires is_floating_type_v<type>
-Angle < type> Radiant(const type& radiant, AngleInterval<type>* interval);
+Angle < type> Radiant(const type& radiant, const AngleInterval<type>& interval);
 
 template<typename type> requires is_floating_type_v<type>
 class Angle
 {
 public:
-	friend Angle Degree<type>(const type&, AngleInterval<type>*);
-	friend Angle Radiant<type>(const type&, AngleInterval<type>*);
+	friend Angle Degree<type>(const type&, const AngleInterval<type>&);
+	friend Angle Radiant<type>(const type&, const AngleInterval<type>&);
 	using value_type = type;
 	using pointer_type = type*;
 	using const_pointer_type = const type*;
 	using reference_type = type&;
 	using const_reference_type = const type&;
 
-	Angle(AngleInterval<type>* strategy = new UnsignedInterval<type>{}) :m_radiants(type{}), m_strategy(std::move(strategy)){}
-	~Angle()
-	{
-		delete m_strategy;
-		m_strategy = nullptr;
-	}
-	Angle(const Angle& other) :m_radiants(other.m_radiants),m_strategy(other.m_strategy) {}
-	Angle(Angle&& other) noexcept : m_radiants(other.m_radiants), m_strategy(std::move(other.m_strategy))
-	{
-		other.m_radiants = type{};
-		other.m_strategy = nullptr;
-	}
-	type AsRadians()
-	{
-		return m_strategy->Normalize(m_radiants);
-	}
+	Angle( const AngleInterval<type>& strategy = UnsignedInterval<type>{});
+	~Angle() = default;
+	Angle(const Angle& other);
 
-	type AsRadians() const
-	{
-		return m_strategy->Normalize(m_radiants);
-	}
-	type AsDegrees()
-	{
-		return m_strategy->Normalize(m_radiants) * static_cast<type>(180) / Math::PI_V<type>;
-	}
-	type AsDegrees() const
-	{
-		return m_strategy->Normalize(m_radiants) * static_cast<type>(180) / Math::PI_V<type>;
-	}
-	Angle& operator=(const Angle& other)
-	{
-		m_radiants = other.m_radiants;
-		m_strategy = other.m_strategy;
-		return *this;
-	}
-	Angle& operator=(Angle&& other) noexcept
-	{
-		m_radiants = other.m_radiants;
-		other.m_radiants = type{};
-		m_strategy = std::move(other.m_strategy);
-		other.m_strategy = nullptr;
-		return *this;
-	}
+	Angle(Angle&& other) noexcept;
 
-	/*Angle operator+(const Angle& other) const
-	{
-		return Angle(m_radiants + other.m_radiants, new AngleInterval<type>(m_strategy->GetMin(),m_strategy->GetMax()));
-	}
+	type AsRadians();
 
-	Angle operator-(const Angle& other) const
-	{
-		return Angle(m_radiants - other.m_radiants, new AngleInterval<type>(m_strategy->GetMin(), m_strategy->GetMax()));
-	}
+	type AsRadians() const;
+
+	type AsDegrees();
+
+	type AsDegrees() const;
+
+	Angle& operator=(const Angle& other);
+
+	Angle& operator=(Angle&& other) noexcept;
+
+	void SetInterval(const AngleInterval<type>& strategy);
+
+	AngleInterval<type> GetInterval() const;
+
+	Angle operator+(const Angle& other) const;
+
+	Angle operator-(const Angle& other) const;
 
 	Angle& operator +=(const Angle& other);
 
@@ -91,16 +63,15 @@ public:
 
 	bool operator!=(const Angle& other) const;
 
-	AngleInterval<type> GetInterval() const;*/
 private:
-	Angle(const type& radiant,  AngleInterval<type>* interval) : m_radiants(radiant),m_strategy(interval){}
+	Angle(const type& radiant, const AngleInterval<type>& interval);
 	type m_radiants;
-	AngleInterval<type>* m_strategy;
+	AngleInterval<type> m_strategy;
 };
 
 
 template <typename type> requires is_floating_type_v<type>
-Angle<type> Degree(const type& degree, AngleInterval<type>* interval)
+Angle<type> Degree(const type& degree, const AngleInterval<type>& interval)
 {
 	auto rad = degree * (Math::PI_V<type> / static_cast<type>(180));
 	return Angle<type>(rad, interval);
@@ -109,10 +80,155 @@ Angle<type> Degree(const type& degree, AngleInterval<type>* interval)
 
 
 template <typename type> requires is_floating_type_v<type>
-Angle<type> Radiant(const type& radiant, AngleInterval<type>* interval)
+Angle<type> Radiant(const type& radiant, const AngleInterval<type>& interval)
 {
 	return Angle<type>(radiant, interval);
 }
+
+template <typename type> requires is_floating_type_v<type>
+Angle<type>::Angle(const AngleInterval<type>& strategy):m_radiants(type{}), m_strategy(strategy)
+{}
+
+template <typename type> requires is_floating_type_v<type>
+Angle<type>::Angle(const Angle& other):m_radiants(other.m_radiants),m_strategy(other.m_strategy)
+{}
+
+template <typename type> requires is_floating_type_v<type>
+Angle<type>::Angle(Angle&& other) noexcept: m_radiants(other.m_radiants), m_strategy(std::move(other.m_strategy))
+{
+	other.m_radiants = type{};
+	other.m_strategy = AngleInterval<type>{};
+}
+
+template <typename type> requires is_floating_type_v<type>
+type Angle<type>::AsRadians()
+{
+	return m_radiants;
+}
+
+template <typename type> requires is_floating_type_v<type>
+type Angle<type>::AsRadians() const
+{
+	return m_strategy.Normalize(m_radiants);
+}
+
+template <typename type> requires is_floating_type_v<type>
+type Angle<type>::AsDegrees()
+{
+	return m_radiants * static_cast<type>(180) / Math::PI_V<type>;
+}
+
+template <typename type> requires is_floating_type_v<type>
+type Angle<type>::AsDegrees() const
+{
+	return m_radiants * static_cast<type>(180) / Math::PI_V<type>;
+}
+
+template <typename type> requires is_floating_type_v<type>
+Angle<type>& Angle<type>::operator=(const Angle& other)
+{
+	m_radiants = other.m_radiants;
+	m_strategy = other.m_strategy;
+	return *this;
+}
+
+template <typename type> requires is_floating_type_v<type>
+Angle<type>& Angle<type>::operator=(Angle&& other) noexcept
+{
+	m_radiants = other.m_radiants;
+	other.m_radiants = type{};
+	m_strategy = std::move(other.m_strategy);
+	other.m_strategy = AngleInterval<type>{};
+	return *this;
+}
+
+template <typename type> requires is_floating_type_v<type>
+void Angle<type>::SetInterval(const AngleInterval<type>& strategy)
+{
+	m_strategy = strategy;
+	m_radiants = m_strategy.Normalize(m_radiants);
+}
+
+template <typename type> requires is_floating_type_v<type>
+AngleInterval<type> Angle<type>::GetInterval() const
+{
+	return m_strategy;
+}
+
+template <typename type> requires is_floating_type_v<type>
+Angle<type> Angle<type>::operator+(const Angle& other) const
+{
+	return Angle(m_radiants + other.m_radiants, m_strategy);
+}
+
+template <typename type> requires is_floating_type_v<type>
+Angle<type> Angle<type>::operator-(const Angle& other) const
+{
+	return Angle(m_radiants - other.m_radiants, m_strategy);
+}
+
+template <typename type> requires is_floating_type_v<type>
+Angle<type>& Angle<type>::operator+=(const Angle& other)
+{
+	m_radiants = m_strategy.Normalize(m_radiants + other.m_radiants);
+	return *this;
+}
+
+template <typename type> requires is_floating_type_v<type>
+Angle<type>& Angle<type>::operator-=(const Angle& other)
+{
+	m_radiants = m_strategy.Normalize(m_radiants - other.m_radiants);
+	return *this;
+}
+
+template <typename type> requires is_floating_type_v<type>
+Angle<type> Angle<type>::operator*(const_reference_type factor) const
+{
+	return Angle(m_radiants * factor);
+}
+
+template <typename type> requires is_floating_type_v<type>
+Angle<type> Angle<type>::operator/(const_reference_type divider) const
+{
+	if (divider == 0)
+		throw std::out_of_range("Imposible to divide by 0");
+	return Angle(m_radiants / divider);
+}
+
+template <typename type> requires is_floating_type_v<type>
+Angle<type>& Angle<type>::operator*=(const_reference_type factor)
+{
+	m_radiants = m_strategy.Normalize(m_radiants * factor);
+	return *this;
+}
+
+template <typename type> requires is_floating_type_v<type>
+Angle<type>& Angle<type>::operator/=(const_reference_type divider)
+{
+	if (divider == 0)
+		throw std::out_of_range("Imposible to divide by 0");
+	m_radiants = m_strategy.Normalize(m_radiants / divider);
+	return *this;
+}
+
+template <typename type> requires is_floating_type_v<type>
+bool Angle<type>::operator==(const Angle& other) const
+{
+	return Math::IsSameValue(m_radiants, other.m_radiants, Math::EPSILON_V<value_type>) && m_strategy == other.m_strategy;
+}
+
+template <typename type> requires is_floating_type_v<type>
+bool Angle<type>::operator!=(const Angle& other) const
+{
+	return !Math::IsSameValue(m_radiants, other.m_radiants, Math::EPSILON_V<value_type>) || m_strategy != other.m_strategy;
+}
+
+template <typename type> requires is_floating_type_v<type>
+Angle<type>::Angle(const type& radiant, const AngleInterval<type>& interval): m_radiants(radiant),m_strategy(interval)
+{
+	m_radiants = m_strategy.Normalize(radiant);
+}
+
 template<typename type, typename AngleInterval > requires is_floating_type_v<type>
 class StaticAngle;
 
@@ -195,25 +311,25 @@ StaticAngle<type, AngleInterval>::StaticAngle(StaticAngle&& other) noexcept: m_r
 template <typename type, typename AngleInterval> requires is_floating_type_v<type>
 type StaticAngle<type, AngleInterval>::AsRadians()
 {
-	return AngleInterval::Normalize(m_radiants);
+	return m_radiants;
 }
 
 template <typename type, typename AngleInterval> requires is_floating_type_v<type>
 type StaticAngle<type, AngleInterval>::AsRadians() const
 {
-	return AngleInterval::Normalize(m_radiants);
+	return m_radiants;
 }
 
 template <typename type, typename AngleInterval> requires is_floating_type_v<type>
 type StaticAngle<type, AngleInterval>::AsDegrees()
 {
-	return AngleInterval::Normalize(m_radiants)* static_cast<type>(180) / Math::PI_V<type>;
+	return m_radiants * static_cast<type>(180) / Math::PI_V<type>;
 }
 
 template <typename type, typename AngleInterval> requires is_floating_type_v<type>
 type StaticAngle<type, AngleInterval>::AsDegrees() const
 {
-	return AngleInterval::Normalize(m_radiants)* static_cast<type>(180) / Math::PI_V<type>;
+	return m_radiants * static_cast<type>(180) / Math::PI_V<type>;
 }
 
 template <typename type, typename AngleInterval> requires is_floating_type_v<type>
@@ -246,14 +362,14 @@ StaticAngle<type, AngleInterval> StaticAngle<type, AngleInterval>::operator-(con
 template <typename type, typename AngleInterval> requires is_floating_type_v<type>
 StaticAngle<type, AngleInterval>& StaticAngle<type, AngleInterval>::operator+=(const StaticAngle& other)
 {
-	m_radiants += other.m_radiants;
+	m_radiants = AngleInterval::Normalize(m_radiants + other.m_radiants);
 	return *this;
 }
 
 template <typename type, typename AngleInterval> requires is_floating_type_v<type>
 StaticAngle<type, AngleInterval>& StaticAngle<type, AngleInterval>::operator-=(const StaticAngle& other)
 {
-	m_radiants -= other.m_radiants;
+	m_radiants = AngleInterval::Normalize(m_radiants - other.m_radiants);
 	return *this;
 }
 
@@ -274,7 +390,7 @@ StaticAngle<type, AngleInterval> StaticAngle<type, AngleInterval>::operator/(con
 template <typename type, typename AngleInterval> requires is_floating_type_v<type>
 StaticAngle<type, AngleInterval>& StaticAngle<type, AngleInterval>::operator*=(const_reference_type factor)
 {
-	m_radiants *= factor;
+	m_radiants = AngleInterval::Normalize(m_radiants * factor);
 	return *this;
 }
 
@@ -283,7 +399,7 @@ StaticAngle<type, AngleInterval>& StaticAngle<type, AngleInterval>::operator/=(c
 {
 	if (divider == 0)
 		throw std::out_of_range("Imposible to divide by 0");
-	m_radiants /= divider;
+	m_radiants = AngleInterval::Normalize(m_radiants / divider);
 	return *this;
 }
 
@@ -308,7 +424,9 @@ GetInterval() const
 
 template <typename type, typename AngleInterval> requires is_floating_type_v<type>
 StaticAngle<type, AngleInterval>::StaticAngle(const type& radiant): m_radiants(radiant)
-{}
+{
+	m_radiants = AngleInterval::Normalize(m_radiants);
+}
 
 template<typename type, typename AngleInterval > requires is_floating_type_v<type>
 StaticAngle< type, AngleInterval> Degree(const type& degree)

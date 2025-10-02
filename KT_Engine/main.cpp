@@ -50,8 +50,9 @@ private:
 
 int main()
 {
-	auto angle = Degree<float>(100, new SignedInterval<float>{});
+	auto angle = Degree<float>(100,  SignedInterval<float>{});
 	angle.AsDegrees();
+	angle.SetInterval(UnsignedInterval<float>());
 
 	/*Derived1 t(12);
 	Derived1 t2(t);
