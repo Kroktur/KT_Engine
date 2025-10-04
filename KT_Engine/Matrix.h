@@ -305,7 +305,7 @@ Matrix<type, height, otherWidth> Matrix<type, height, width>::MatrixProduct(
 	{
 		for (size_t col = 0; col < otherWidth; ++col)
 		{
-			auto data  = type{};
+			auto data = type{};
 			for (size_t idx = 0; idx < width; ++idx)
 				data += GetCell(row, idx) * other.GetCell(idx, col);
 			result.GetCell(row, col) = data;
@@ -328,3 +328,23 @@ Matrix<type, width, height> Matrix<type, height, width>::Transposition() const
 	return result;
 }
 
+template<typename type,size_t height,size_t width>
+std::ostream& operator<< (std::ostream& os,const Matrix<type,height,width>& matrix)
+{
+	os << "Matrix: " << std::endl;
+	if (matrix.Size() == 0)
+	{
+		os << "[ ]" << std::endl;
+		return os;
+	}
+	for (auto i = 0; i < height; ++i)
+	{
+		os << "[";
+		for (auto j = 0; j < width - 1; ++j)
+		{
+			os << matrix.GetCell(i, j) << " , ";
+		}
+		os << matrix.GetCell(i, width - 1) << "]" << std::endl;
+	}
+	return os;
+}

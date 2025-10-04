@@ -4,6 +4,7 @@
 #include "Angle.h"
 #include "AngleInterval.h"
 #include "Dispacher.h"
+#include "Matrix.h"
 
 template<typename type>
 static constexpr type data = 1000000;
@@ -101,7 +102,9 @@ int main()
 	angle.AsDegrees();
 	angle.SetInterval(UnsignedInterval<float>());
 
-
+	Matrix<int, 2, 3> data(1,2,3,4,5,6);
+	Matrix<int, 3, 3> data2(1,2,3,4,5,6,7,8,9);
+	std::cout << data.MatrixProduct(data2);
 
 	/*Derived1 t(12);
 	Derived1 t2(t);

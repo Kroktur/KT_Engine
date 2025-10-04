@@ -136,6 +136,7 @@
     <ClInclude Include="PrimaryType_Category.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="RunTime_Factory.h" />
+    <ClInclude Include="SquareMatrix.h" />
     <ClInclude Include="Typelist.h" />
     <ClInclude Include="TypeTrait.h" />
     <ClInclude Include="Vec2.h" />
