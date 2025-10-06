@@ -439,3 +439,17 @@ StaticAngle< type, AngleInterval> Radiant(const type& radiant)
 {
 	return StaticAngle< type, AngleInterval>(radiant);
 }
+
+template< typename type>
+std::ostream& operator<<(std::ostream& os, Angle <type>& angle)
+{
+	os << "Angle: " << angle.AsRadians() << " Rad" << std::endl;
+	return os;
+}
+
+template< typename type, typename AngleInterval >
+std::ostream& operator<<(std::ostream& os, StaticAngle <type,AngleInterval>& angle)
+{
+	os << "Angle: " << angle.AsRadians() << " Rad" << std::endl;
+	return os;
+}

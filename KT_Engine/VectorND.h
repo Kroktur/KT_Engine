@@ -296,5 +296,18 @@ typename VectorND<type, size>::value_type VectorND<type, size>::Dot(const Vector
 	return result;
 }
 
-
+template<typename type, size_t size>
+std::ostream& operator<<(std::ostream& os, const VectorND < type, size >& vectorND)
+{
+	os << "VecND: ";
+	if (size == 0)
+		return os << "[ ]" << std::endl;
+	os << "[";
+	for (auto i = 0; i < size - 1; ++i)
+	{
+		os << vectorND.At(i) << ",";
+	}
+	os << vectorND.At(size - 1) << "]" << std::endl;
+	return os;
+}
 

@@ -5,6 +5,7 @@
 #include "AngleInterval.h"
 #include "Dispacher.h"
 #include "Matrix.h"
+#include "VectorND.h"
 
 template<typename type>
 static constexpr type data = 1000000;
@@ -106,6 +107,8 @@ int main()
 	Matrix<int, 3, 3> data2(1,2,3,4,5,6,7,8,9);
 	std::cout << data.MatrixProduct(data2);
 
+	VectorND<float, 3> test;
+	std::cout << test;
 	/*Derived1 t(12);
 	Derived1 t2(t);
 	t2.test();
