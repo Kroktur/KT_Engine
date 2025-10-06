@@ -6,7 +6,7 @@
 #include "Dispacher.h"
 #include "Matrix.h"
 #include "VectorND.h"
-
+#include "ComponentManager.h"
 template<typename type>
 static constexpr type data = 1000000;
 
@@ -93,7 +93,11 @@ void totoLambda(Base& test, Base& test2,int)
 {
 	std::cout << " GOAL" << std::endl;
 }
-
+//struct testComponent
+//{
+//	int tata;
+//
+//};
 
 int main()
 {
@@ -109,6 +113,12 @@ int main()
 
 	VectorND<float, 3> test;
 	std::cout << test;
+
+
+	//ComponentManager go;
+	//go.AddComponent<testComponent>();
+	//go.GetComponent<testComponent>()->tata = 34;
+	//std::cout << go.GetComponent<testComponent>()->tata;
 	/*Derived1 t(12);
 	Derived1 t2(t);
 	t2.test();

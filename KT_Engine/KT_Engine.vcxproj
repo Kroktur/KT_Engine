@@ -128,6 +128,7 @@
     <ClInclude Include="Angle.h" />
     <ClInclude Include="AngleInterval.h" />
     <ClInclude Include="CompileTime_Factory.h" />
+    <ClInclude Include="ComponentManager.h" />
     <ClInclude Include="CreateStrategy.h" />
     <ClInclude Include="Dispacher.h" />
     <ClInclude Include="DispatcherFill.h" />
