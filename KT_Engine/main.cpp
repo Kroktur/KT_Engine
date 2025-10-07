@@ -95,6 +95,7 @@ void totoLambda(Base& test, Base& test2,int)
 }
 struct testComponent
 {
+	testComponent(int t) : tata(t){}
 	int tata;
 
 };
@@ -120,10 +121,11 @@ int main()
 
 
 	ComponentManager go;
-	go.AddComponent<testComponent>();
+	go.AddComponent<testComponent>(34);
 	go.AddComponent<testComponent2>();
-	go.GetComponent<testComponent>()->tata = 34;
+	/*go.GetComponent<testComponent>()->tata = 34;*/
 	go.GetComponent<testComponent2>()->toto = 44;
+	go.RemplaceComponent<testComponent>(55);
 	std::cout << go.GetComponent<testComponent>()->tata << " ";
 	std::cout << go.GetComponent<testComponent2>()->toto << " ";
 	std::cout << RTTI::GetTypeId<testComponent>();

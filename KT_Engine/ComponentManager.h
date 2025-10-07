@@ -118,20 +118,26 @@ template<typename type>
 class ComponentContainer
 {
 public:
-	static void AddComponent(int id)
+	template<typename... Args>
+	static void AddComponent(int id,const Args&... args)
 	{
 		auto it = m_components.find(id);
 		if (it == m_components.end())
-			m_components[id] = std::move(std::make_unique<type>());
+			m_components[id] = std::make_unique<type>(args...);
 		else
-			throw;
+			throw std::runtime_error("component Already Exist");
 	}
-	static type* find(int id)
+	static type* GetComponent(int id)
 	{
 		auto it = m_components.find(id);
-		if (it != m_components.end())
-			return it->second.get();
-		return nullptr;
+		return (it != m_components.end()) ? it->second.get() : nullptr;
+	}
+	static void RemoveComponent(int id )
+	{
+		auto it = m_components.find(id);
+		if (it == m_components.end())
+			throw std::runtime_error("Doesn't exists");
+		m_components.erase(it);
 	}
 private:
 	static std::map<int, std::unique_ptr<type>> m_components;
@@ -142,25 +148,51 @@ std::map<int, std::unique_ptr<type>> ComponentContainer<type>::m_components = st
 struct ComponentManager
 {
 public:
-	template<typename type>
-		void AddComponent()
+	template<typename type,typename... Args>
+		void AddComponent(const Args&... args)
 		{
+		auto it = m_idsComponent.find(RTTI::GetTypeId<type>());
+		if (it != m_idsComponent.end())
+			throw std::runtime_error("Component Already Exists");
 			auto id = RTTI::GetInstanceId<type>();
 			m_idsComponent[RTTI::GetTypeId<type>()] = id;
-			ComponentContainer<type>::AddComponent(id);
+			ComponentContainer<type>::AddComponent(id,args...);
 		}
 		template<typename type>
 		type* GetComponent()
 		{
 			auto it = m_idsComponent.find(RTTI::GetTypeId<type>());
-			if (it != m_idsComponent.end())
-				return ComponentContainer<type>::find(it->second);
-			return nullptr;
+			return (it != m_idsComponent.end()) ? ComponentContainer<type>::GetComponent(it->second) : nullptr;
+		}
+		template<typename type>
+		void RemoveComponent()
+		{
+			auto it = m_idsComponent.find(RTTI::GetTypeId<type>());
+			if (it == m_idsComponent.end())
+				throw std::runtime_error("Doesn't exists");
+			ComponentContainer<type>::RemoveComponent(it->second);
+			m_idsComponent.erase(it);
+		}
+
+		template<typename type,typename... Args>
+		void RemplaceComponent(const Args&... args)
+		{
+			RemoveComponent<type>();
+			AddComponent<type>(args...);
+		}
+
+		template<typename type>
+		bool HasComponent() const
+		{
+			auto it = m_idsComponent.find(RTTI::GetTypeId<type>());
+			return it != m_idsComponent.end();
 		}
 private:
 	std::map<int,int> m_idsComponent;
 };
 
 
-//TODO lvl 4 : type perfection
 
+//TODO lvl 4 : type perfection and secure Component
+
+//TODO lvl 5 : pool and Optimisation
