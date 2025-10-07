@@ -95,6 +95,72 @@
 //};
 
 // TODO Lvl 3 : secure Component and RTTI
+class RTTI
+{
+public:
+	template<typename type>
+	static int GetTypeId()
+	{
+		static int id = m_id++;
+		return id;
+	}
+	template <typename type>
+	static int GetInstanceId()
+	{
+		static int id = 0;
+		return id++;
+	}
+private:
+	static int m_id;
+};
+int RTTI::m_id = 0;
+template<typename type>
+class ComponentContainer
+{
+public:
+	static void AddComponent(int id)
+	{
+		auto it = m_components.find(id);
+		if (it == m_components.end())
+			m_components[id] = std::move(std::make_unique<type>());
+		else
+			throw;
+	}
+	static type* find(int id)
+	{
+		auto it = m_components.find(id);
+		if (it != m_components.end())
+			return it->second.get();
+		return nullptr;
+	}
+private:
+	static std::map<int, std::unique_ptr<type>> m_components;
+};
+template<typename type>
+std::map<int, std::unique_ptr<type>> ComponentContainer<type>::m_components = std::map<int, std::unique_ptr<type>>{};
+
+struct ComponentManager
+{
+public:
+	template<typename type>
+		void AddComponent()
+		{
+			auto id = RTTI::GetInstanceId<type>();
+			m_idsComponent[RTTI::GetTypeId<type>()] = id;
+			ComponentContainer<type>::AddComponent(id);
+		}
+		template<typename type>
+		type* GetComponent()
+		{
+			auto it = m_idsComponent.find(RTTI::GetTypeId<type>());
+			if (it != m_idsComponent.end())
+				return ComponentContainer<type>::find(it->second);
+			return nullptr;
+		}
+private:
+	std::map<int,int> m_idsComponent;
+};
+
 
 //TODO lvl 4 : type perfection
 

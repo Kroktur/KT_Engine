@@ -93,12 +93,16 @@ void totoLambda(Base& test, Base& test2,int)
 {
 	std::cout << " GOAL" << std::endl;
 }
-//struct testComponent
-//{
-//	int tata;
-//
-//};
+struct testComponent
+{
+	int tata;
 
+};
+
+struct testComponent2
+{
+	int toto;
+};
 int main()
 {
 	Derived1 d;
@@ -115,10 +119,14 @@ int main()
 	std::cout << test;
 
 
-	//ComponentManager go;
-	//go.AddComponent<testComponent>();
-	//go.GetComponent<testComponent>()->tata = 34;
-	//std::cout << go.GetComponent<testComponent>()->tata;
+	ComponentManager go;
+	go.AddComponent<testComponent>();
+	go.AddComponent<testComponent2>();
+	go.GetComponent<testComponent>()->tata = 34;
+	go.GetComponent<testComponent2>()->toto = 44;
+	std::cout << go.GetComponent<testComponent>()->tata << " ";
+	std::cout << go.GetComponent<testComponent2>()->toto << " ";
+	std::cout << RTTI::GetTypeId<testComponent>();
 	/*Derived1 t(12);
 	Derived1 t2(t);
 	t2.test();
