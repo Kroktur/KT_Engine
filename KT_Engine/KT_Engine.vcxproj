@@ -127,6 +127,7 @@
   <ItemGroup>
     <ClInclude Include="Angle.h" />
     <ClInclude Include="AngleInterval.h" />
+    <ClInclude Include="Chrono.h" />
     <ClInclude Include="CompileTime_Factory.h" />
     <ClInclude Include="ComponentManager.h" />
     <ClInclude Include="CreateStrategy.h" />

@@ -59,6 +59,10 @@
     <ClInclude Include="ComponentManager.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="Vertex.h" />
+    <ClInclude Include="Chrono.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Fichiers de ressources">
